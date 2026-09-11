@@ -1,9 +1,17 @@
+import { Flex } from "@radix-ui/themes/components/flex";
+import { Text } from "@radix-ui/themes/components/text";
+import { Button } from "@radix-ui/themes/components/button";
 import Image from "next/image";
 
 export default function Home() {
   return (
     <div className="flex flex-col flex-1 items-center justify-center bg-zinc-50 font-sans dark:bg-black">
       <main className="flex flex-1 w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
+        <Flex direction="column" gap="2">
+          <Text>Hello from Radix Themes :)</Text>
+          <Button>Let&apos;s go</Button>
+        </Flex>
+        <br />
         <Image
           className="dark:invert h-5 w-[100px]"
           src="/next.svg"
