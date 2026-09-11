@@ -1,12 +1,18 @@
 {
   "$schema": "https://raw.githubusercontent.com/jetify-com/devbox/0.17.5/.schema/devbox.schema.json",
-  "packages": ["nodejs@24", "docker@latest", "nest-cli@11"],
+  "packages": [
+    "nodejs@24",
+    "docker@latest",
+    "nest-cli@11",
+    "mprocs@latest"
+  ],
   "env": {
     "COMPOSE_ENV_FILES": "$DEVBOX_PROJECT_ROOT/.env.docker"
   },
   "shell": {
     "init_hook": ["cd ./ui && npm install"],
     "scripts": {
+      "dev": "mprocs",
       "start:ui": "cd ./ui && npm run dev"
     }
   }

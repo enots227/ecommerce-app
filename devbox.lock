@@ -43,6 +43,54 @@
       "last_modified": "2026-09-10T20:56:27Z",
       "resolved": "github:NixOS/nixpkgs/aff8a0b28396750446e5537a96461bc4facdb287?lastModified=1789073787&narHash=sha256-xfX%2FtoC2QV707s06GbP4II%2FTxYF0fNQj7s5%2FLClNDKc%3D"
     },
+    "mprocs@latest": {
+      "last_modified": "2026-08-27T07:16:00Z",
+      "resolved": "github:NixOS/nixpkgs/c27cdad491a991b11ed731760aa2ef8db0cb0410#mprocs",
+      "source": "devbox-search",
+      "version": "0.9.6",
+      "systems": {
+        "aarch64-darwin": {
+          "outputs": [
+            {
+              "name": "out",
+              "path": "/nix/store/8d9dlpmy7cqwkinhbjy0lx80qvjvjiqn-mprocs-0.9.6",
+              "default": true
+            }
+          ],
+          "store_path": "/nix/store/8d9dlpmy7cqwkinhbjy0lx80qvjvjiqn-mprocs-0.9.6"
+        },
+        "aarch64-linux": {
+          "outputs": [
+            {
+              "name": "out",
+              "path": "/nix/store/6vxfrpbvi7h6hnhf1s07jl71lsrblq7r-mprocs-0.9.6",
+              "default": true
+            }
+          ],
+          "store_path": "/nix/store/6vxfrpbvi7h6hnhf1s07jl71lsrblq7r-mprocs-0.9.6"
+        },
+        "x86_64-darwin": {
+          "outputs": [
+            {
+              "name": "out",
+              "path": "/nix/store/ra44jpn73kk3irgh21kffbizd1yzy37r-mprocs-0.9.6",
+              "default": true
+            }
+          ],
+          "store_path": "/nix/store/ra44jpn73kk3irgh21kffbizd1yzy37r-mprocs-0.9.6"
+        },
+        "x86_64-linux": {
+          "outputs": [
+            {
+              "name": "out",
+              "path": "/nix/store/l85xmd2qnkmj10cb8cwgpgyh7z65cyvg-mprocs-0.9.6",
+              "default": true
+            }
+          ],
+          "store_path": "/nix/store/l85xmd2qnkmj10cb8cwgpgyh7z65cyvg-mprocs-0.9.6"
+        }
+      }
+    },
     "nest-cli@11": {
       "last_modified": "2026-08-27T07:16:00Z",
       "resolved": "github:NixOS/nixpkgs/c27cdad491a991b11ed731760aa2ef8db0cb0410#nest-cli",

@@ -1,0 +1,27 @@
+# Run with `devbox run dev` (needs the devbox env for COMPOSE_ENV_FILES).
+# Docker services start automatically; apps are listed but stopped.
+# Select an app and press `s` to start it, `x` to stop, `r` to restart.
+procs:
+  docker:
+    shell: docker compose up
+    cwd: <CONFIG_DIR>
+    autostart: true
+    # SIGINT lets compose stop the containers gracefully on quit.
+    # stop: SIGINT
+  ui:
+    shell: npm run dev
+    cwd: <CONFIG_DIR>/ui
+    autostart: false
+    env:
+      PORT: "3000"
+  api:
+    shell: npm run dev
+    cwd: <CONFIG_DIR>/api
+    autostart: false
+    env:
+      # Nest and Next both default to 3000.
+      PORT: "3001"
+  cms:
+    shell: npm run dev
+    cwd: <CONFIG_DIR>/cms
+    autostart: false
