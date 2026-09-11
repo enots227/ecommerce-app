@@ -1,0 +1,10 @@
+{
+  "$schema": "https://raw.githubusercontent.com/jetify-com/devbox/0.17.5/.schema/devbox.schema.json",
+  "packages": ["nodejs@24", "docker@latest", "nest-cli@11"],
+  "shell": {
+    "init_hook": ["cd ./ui && npm install"],
+    "scripts": {
+      "start:ui": "cd ./ui && npm run dev"
+    }
+  }
+}
