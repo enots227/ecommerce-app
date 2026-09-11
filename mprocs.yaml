@@ -22,6 +22,10 @@ procs:
       # Nest and Next both default to 3000.
       PORT: "3001"
   cms:
-    shell: npm run dev
+    # Export the shared ECOMMERCE_CMS_DB_* settings from the root .env.docker.
+    # Strapi's dotenv never overrides variables that are already set.
+    shell: set -a && . ../.env.docker && set +a && npm run dev
     cwd: <CONFIG_DIR>/cms
     autostart: false
+    env:
+      ENV_PATH: .env.docker
