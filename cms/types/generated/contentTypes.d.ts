@@ -473,6 +473,80 @@ export interface ApiAuthorAuthor extends Struct.CollectionTypeSchema {
   };
 }
 
+export interface ApiBookEditionBookEdition extends Struct.CollectionTypeSchema {
+  collectionName: 'book_editions';
+  info: {
+    displayName: 'BookEdition';
+    pluralName: 'book-editions';
+    singularName: 'book-edition';
+  };
+  options: {
+    draftAndPublish: true;
+  };
+  attributes: {
+    book: Schema.Attribute.Relation<'manyToOne', 'api::book.book'>;
+    createdAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    locale: Schema.Attribute.String & Schema.Attribute.Private;
+    localizations: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::book-edition.book-edition'
+    > &
+      Schema.Attribute.Private;
+    name: Schema.Attribute.String;
+    publishedAt: Schema.Attribute.DateTime;
+    releasedAt: Schema.Attribute.Date;
+    skus: Schema.Attribute.Relation<'oneToMany', 'api::book-sku.book-sku'>;
+    updatedAt: Schema.Attribute.DateTime;
+    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+  };
+}
+
+export interface ApiBookSkuBookSku extends Struct.CollectionTypeSchema {
+  collectionName: 'book_skus';
+  info: {
+    displayName: 'BookSku';
+    pluralName: 'book-skus';
+    singularName: 'book-sku';
+  };
+  options: {
+    draftAndPublish: false;
+  };
+  attributes: {
+    book: Schema.Attribute.Relation<'manyToOne', 'api::book.book'> &
+      Schema.Attribute.Required;
+    condition: Schema.Attribute.Enumeration<
+      ['NEW', 'PRISTINE', 'EXCELLENT', 'GOOD', 'FINE', 'FAIR', 'POOR']
+    > &
+      Schema.Attribute.Required;
+    createdAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    edition: Schema.Attribute.Relation<
+      'manyToOne',
+      'api::book-edition.book-edition'
+    >;
+    format: Schema.Attribute.Enumeration<
+      ['HARDCOVER', 'TRADE_PAPERBACK', 'PAPERBACK']
+    > &
+      Schema.Attribute.Required;
+    locale: Schema.Attribute.String & Schema.Attribute.Private;
+    localizations: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::book-sku.book-sku'
+    > &
+      Schema.Attribute.Private;
+    publishedAt: Schema.Attribute.DateTime;
+    sku: Schema.Attribute.Relation<'oneToOne', 'api::sku.sku'> &
+      Schema.Attribute.Required;
+    updatedAt: Schema.Attribute.DateTime;
+    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+  };
+}
+
 export interface ApiBookBook extends Struct.CollectionTypeSchema {
   collectionName: 'books';
   info: {
@@ -493,15 +567,81 @@ export interface ApiBookBook extends Struct.CollectionTypeSchema {
     createdAt: Schema.Attribute.DateTime;
     createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;
+    editions: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::book-edition.book-edition'
+    >;
     locale: Schema.Attribute.String;
     localizations: Schema.Attribute.Relation<'oneToMany', 'api::book.book'>;
     publishedAt: Schema.Attribute.DateTime;
+    stockKeepingUnits: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::book-sku.book-sku'
+    >;
     title: Schema.Attribute.String &
+      Schema.Attribute.Required &
       Schema.Attribute.SetPluginOptions<{
         i18n: {
           localized: true;
         };
       }>;
+    updatedAt: Schema.Attribute.DateTime;
+    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+  };
+}
+
+export interface ApiSkuPriceSkuPrice extends Struct.CollectionTypeSchema {
+  collectionName: 'sku_prices';
+  info: {
+    displayName: 'SkuPrice';
+    pluralName: 'sku-prices';
+    singularName: 'sku-price';
+  };
+  options: {
+    draftAndPublish: true;
+  };
+  attributes: {
+    createdAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    endAt: Schema.Attribute.DateTime;
+    locale: Schema.Attribute.String & Schema.Attribute.Private;
+    localizations: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::sku-price.sku-price'
+    > &
+      Schema.Attribute.Private;
+    price: Schema.Attribute.Integer;
+    publishedAt: Schema.Attribute.DateTime;
+    skus: Schema.Attribute.Relation<'manyToOne', 'api::sku.sku'>;
+    startAt: Schema.Attribute.DateTime;
+    updatedAt: Schema.Attribute.DateTime;
+    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+  };
+}
+
+export interface ApiSkuSku extends Struct.CollectionTypeSchema {
+  collectionName: 'skus';
+  info: {
+    displayName: 'Sku';
+    pluralName: 'skus';
+    singularName: 'sku';
+  };
+  options: {
+    draftAndPublish: true;
+  };
+  attributes: {
+    createdAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    locale: Schema.Attribute.String & Schema.Attribute.Private;
+    localizations: Schema.Attribute.Relation<'oneToMany', 'api::sku.sku'> &
+      Schema.Attribute.Private;
+    prices: Schema.Attribute.Relation<'oneToMany', 'api::sku-price.sku-price'>;
+    publishedAt: Schema.Attribute.DateTime;
+    type: Schema.Attribute.Enumeration<['BOOK']> & Schema.Attribute.Required;
     updatedAt: Schema.Attribute.DateTime;
     updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;
@@ -1020,7 +1160,11 @@ declare module '@strapi/strapi' {
       'admin::transfer-token-permission': AdminTransferTokenPermission;
       'admin::user': AdminUser;
       'api::author.author': ApiAuthorAuthor;
+      'api::book-edition.book-edition': ApiBookEditionBookEdition;
+      'api::book-sku.book-sku': ApiBookSkuBookSku;
       'api::book.book': ApiBookBook;
+      'api::sku-price.sku-price': ApiSkuPriceSkuPrice;
+      'api::sku.sku': ApiSkuSku;
       'plugin::content-releases.release': PluginContentReleasesRelease;
       'plugin::content-releases.release-action': PluginContentReleasesReleaseAction;
       'plugin::i18n.locale': PluginI18NLocale;

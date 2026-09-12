@@ -1,0 +1,56 @@
+{
+  "kind": "collectionType",
+  "collectionName": "book_skus",
+  "info": {
+    "singularName": "book-sku",
+    "pluralName": "book-skus",
+    "displayName": "BookSku"
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "sku": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "api::sku.sku",
+      "required": true
+    },
+    "book": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::book.book",
+      "required": true,
+      "inversedBy": "stockKeepingUnits"
+    },
+    "edition": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::book-edition.book-edition",
+      "inversedBy": "skus"
+    },
+    "condition": {
+      "type": "enumeration",
+      "required": true,
+      "enum": [
+        "NEW",
+        "PRISTINE",
+        "EXCELLENT",
+        "GOOD",
+        "FINE",
+        "FAIR",
+        "POOR"
+      ]
+    },
+    "format": {
+      "type": "enumeration",
+      "required": true,
+      "enum": [
+        "HARDCOVER",
+        "TRADE_PAPERBACK",
+        "PAPERBACK"
+      ]
+    }
+  }
+}

@@ -1,0 +1,30 @@
+{
+  "kind": "collectionType",
+  "collectionName": "sku_prices",
+  "info": {
+    "singularName": "sku-price",
+    "pluralName": "sku-prices",
+    "displayName": "SkuPrice"
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "skus": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::sku.sku",
+      "inversedBy": "prices"
+    },
+    "price": {
+      "type": "integer"
+    },
+    "startAt": {
+      "type": "datetime"
+    },
+    "endAt": {
+      "type": "datetime"
+    }
+  }
+}

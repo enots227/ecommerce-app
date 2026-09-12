@@ -1,21 +1,21 @@
 import { Core } from "@strapi/strapi";
 
-const TOKEN_NAME = "ecommerce";
+const TOKEN_NAME = "ecommerce-public";
 
 export async function seedApiToken(strapi: Core.Strapi): Promise<void> {
-  const { ECOMMERCE_CMS_API_TOKEN } = process.env;
+  const { NEXT_PUBLIC_ECOMMERCE_CMS_API_TOKEN } = process.env;
 
-  if (!ECOMMERCE_CMS_API_TOKEN) return;
+  if (!NEXT_PUBLIC_ECOMMERCE_CMS_API_TOKEN) return;
 
   const tokens = strapi.db.query("admin::api-token");
   const tokenService = strapi.service("admin::api-token-content-api");
   // Requests are matched on the salted hash; the encrypted copy lets the
   // admin panel reveal the key.
   const keys = {
-    accessKey: tokenService.hash(ECOMMERCE_CMS_API_TOKEN),
+    accessKey: tokenService.hash(NEXT_PUBLIC_ECOMMERCE_CMS_API_TOKEN),
     encryptedKey: strapi
       .service("admin::encryption")
-      .encrypt(ECOMMERCE_CMS_API_TOKEN),
+      .encrypt(NEXT_PUBLIC_ECOMMERCE_CMS_API_TOKEN),
   };
 
   const existing = await tokens.findOne({ where: { name: TOKEN_NAME } });
@@ -26,10 +26,12 @@ export async function seedApiToken(strapi: Core.Strapi): Promise<void> {
     existing ??
     (await tokenService.create({
       name: TOKEN_NAME,
-      description: "Seeded from ECOMMERCE_CMS_API_TOKEN",
+      description: "Seeded from NEXT_PUBLIC_ECOMMERCE_CMS_API_TOKEN",
       type: "read-only",
       lifespan: null,
     }));
   await tokens.update({ where: { id }, data: keys });
-  strapi.log.info(`Seeded API token "${TOKEN_NAME}" from ECOMMERCE_CMS_API_TOKEN`);
+  strapi.log.info(
+    `Seeded API token "${TOKEN_NAME}" from NEXT_PUBLIC_ECOMMERCE_CMS_API_TOKEN`,
+  );
 }

@@ -21,13 +21,26 @@
         "i18n": {
           "localized": true
         }
-      }
+      },
+      "required": true
     },
     "authors": {
       "type": "relation",
       "relation": "manyToMany",
       "target": "api::author.author",
       "mappedBy": "books"
+    },
+    "editions": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::book-edition.book-edition",
+      "mappedBy": "book"
+    },
+    "stockKeepingUnits": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::book-sku.book-sku",
+      "mappedBy": "book"
     }
   }
 }
