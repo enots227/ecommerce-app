@@ -25,6 +25,12 @@
     },
     "endAt": {
       "type": "datetime"
+    },
+    "discounts": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::sku-discount.sku-discount",
+      "mappedBy": "skuPrice"
     }
   }
 }

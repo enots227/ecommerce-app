@@ -1,0 +1,47 @@
+{
+  "kind": "collectionType",
+  "collectionName": "sku_discounts",
+  "info": {
+    "singularName": "sku-discount",
+    "pluralName": "sku-discounts",
+    "displayName": "SkuDiscount"
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "skuPrice": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::sku-price.sku-price",
+      "required": true,
+      "inversedBy": "discounts"
+    },
+    "type": {
+      "type": "enumeration",
+      "required": true,
+      "enum": [
+        "PROMOTIONAL"
+      ]
+    },
+    "startAt": {
+      "type": "datetime",
+      "required": true
+    },
+    "endAt": {
+      "type": "datetime",
+      "required": true
+    },
+    "action": {
+      "type": "enumeration",
+      "enum": [
+        "PRICE_REDUCTION",
+        "DISCOUNT_PERCENTAGE"
+      ]
+    },
+    "amount": {
+      "type": "integer"
+    }
+  }
+}

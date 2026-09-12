@@ -591,6 +591,46 @@ export interface ApiBookBook extends Struct.CollectionTypeSchema {
   };
 }
 
+export interface ApiSkuDiscountSkuDiscount extends Struct.CollectionTypeSchema {
+  collectionName: 'sku_discounts';
+  info: {
+    displayName: 'SkuDiscount';
+    pluralName: 'sku-discounts';
+    singularName: 'sku-discount';
+  };
+  options: {
+    draftAndPublish: true;
+  };
+  attributes: {
+    action: Schema.Attribute.Enumeration<
+      ['PRICE_REDUCTION', 'DISCOUNT_PERCENTAGE']
+    >;
+    amount: Schema.Attribute.Integer;
+    createdAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    endAt: Schema.Attribute.DateTime & Schema.Attribute.Required;
+    locale: Schema.Attribute.String & Schema.Attribute.Private;
+    localizations: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::sku-discount.sku-discount'
+    > &
+      Schema.Attribute.Private;
+    publishedAt: Schema.Attribute.DateTime;
+    skuPrice: Schema.Attribute.Relation<
+      'manyToOne',
+      'api::sku-price.sku-price'
+    > &
+      Schema.Attribute.Required;
+    startAt: Schema.Attribute.DateTime & Schema.Attribute.Required;
+    type: Schema.Attribute.Enumeration<['PROMOTIONAL']> &
+      Schema.Attribute.Required;
+    updatedAt: Schema.Attribute.DateTime;
+    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+  };
+}
+
 export interface ApiSkuPriceSkuPrice extends Struct.CollectionTypeSchema {
   collectionName: 'sku_prices';
   info: {
@@ -605,6 +645,10 @@ export interface ApiSkuPriceSkuPrice extends Struct.CollectionTypeSchema {
     createdAt: Schema.Attribute.DateTime;
     createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;
+    discounts: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::sku-discount.sku-discount'
+    >;
     endAt: Schema.Attribute.DateTime;
     locale: Schema.Attribute.String & Schema.Attribute.Private;
     localizations: Schema.Attribute.Relation<
@@ -1163,6 +1207,7 @@ declare module '@strapi/strapi' {
       'api::book-edition.book-edition': ApiBookEditionBookEdition;
       'api::book-sku.book-sku': ApiBookSkuBookSku;
       'api::book.book': ApiBookBook;
+      'api::sku-discount.sku-discount': ApiSkuDiscountSkuDiscount;
       'api::sku-price.sku-price': ApiSkuPriceSkuPrice;
       'api::sku.sku': ApiSkuSku;
       'plugin::content-releases.release': PluginContentReleasesRelease;
