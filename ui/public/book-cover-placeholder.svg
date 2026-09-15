@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 300" role="img" aria-label="Book cover placeholder">
+  <rect width="200" height="300" fill="#e8e4df" />
+  <rect x="0" y="0" width="10" height="300" fill="#d6d0c8" />
+  <g fill="none" stroke="#c2bab0" stroke-width="2">
+    <rect x="34" y="40" width="132" height="196" />
+  </g>
+  <g fill="#c2bab0">
+    <rect x="54" y="96" width="92" height="8" rx="4" />
+    <rect x="54" y="118" width="92" height="8" rx="4" />
+    <rect x="72" y="140" width="56" height="8" rx="4" />
+    <circle cx="100" cy="190" r="18" />
+  </g>
+</svg>

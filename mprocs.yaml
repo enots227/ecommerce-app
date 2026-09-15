@@ -9,7 +9,8 @@ procs:
     # SIGINT lets compose stop the containers gracefully on quit.
     # stop: SIGINT
   ui:
-    shell: npm run dev
+    # Export the shared NEXT_PUBLIC_ECOMMERCE_CMS_API_TOKEN from the root .env.docker.
+    shell: set -a && . ../.env.docker && set +a && npm run dev
     cwd: <CONFIG_DIR>/ui
     autostart: false
     env:
