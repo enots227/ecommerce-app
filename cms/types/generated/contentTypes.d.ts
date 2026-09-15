@@ -591,6 +591,41 @@ export interface ApiBookBook extends Struct.CollectionTypeSchema {
   };
 }
 
+export interface ApiCatalogLandingPageCatalogLandingPage
+  extends Struct.CollectionTypeSchema {
+  collectionName: 'catalog_landing_pages';
+  info: {
+    displayName: 'CatalogLandingPage';
+    pluralName: 'catalog-landing-pages';
+    singularName: 'catalog-landing-page';
+  };
+  options: {
+    draftAndPublish: true;
+  };
+  attributes: {
+    createdAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    locale: Schema.Attribute.String & Schema.Attribute.Private;
+    localizations: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::catalog-landing-page.catalog-landing-page'
+    > &
+      Schema.Attribute.Private;
+    productFilters: Schema.Attribute.JSON;
+    productType: Schema.Attribute.Enumeration<['BOOK']>;
+    publishedAt: Schema.Attribute.DateTime;
+    slug: Schema.Attribute.String &
+      Schema.Attribute.Required &
+      Schema.Attribute.Unique;
+    summary: Schema.Attribute.Blocks;
+    title: Schema.Attribute.String & Schema.Attribute.Required;
+    updatedAt: Schema.Attribute.DateTime;
+    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+  };
+}
+
 export interface ApiSkuDiscountSkuDiscount extends Struct.CollectionTypeSchema {
   collectionName: 'sku_discounts';
   info: {
@@ -1207,6 +1242,7 @@ declare module '@strapi/strapi' {
       'api::book-edition.book-edition': ApiBookEditionBookEdition;
       'api::book-sku.book-sku': ApiBookSkuBookSku;
       'api::book.book': ApiBookBook;
+      'api::catalog-landing-page.catalog-landing-page': ApiCatalogLandingPageCatalogLandingPage;
       'api::sku-discount.sku-discount': ApiSkuDiscountSkuDiscount;
       'api::sku-price.sku-price': ApiSkuPriceSkuPrice;
       'api::sku.sku': ApiSkuSku;

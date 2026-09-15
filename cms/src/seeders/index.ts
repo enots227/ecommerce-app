@@ -5,6 +5,7 @@ import { seedAuthors } from "./authors.seeder";
 import { seedBookEditions } from "./book-editions.seeder";
 import { seedBookSkus } from "./book-skus.seeder";
 import { seedBooks } from "./books.seeder";
+import { seedCatalogLandingPages } from "./catalog-landing-page.seeder";
 import { seedSkuDiscounts } from "./sku-discounts.seeder";
 import { seedDefaultAdmin } from "./user.seeder";
 
@@ -16,4 +17,5 @@ export async function seedEnvironment(strapi: Core.Strapi): Promise<void> {
   await seedBookEditions(strapi);
   await seedBookSkus(strapi);
   await seedSkuDiscounts(strapi);
+  await seedCatalogLandingPages(strapi);
 }
