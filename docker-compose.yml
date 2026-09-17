@@ -1,24 +1,24 @@
 services:
-  ecommerce-db:
-    image: postgres:18-alpine
-    container_name: ecommerce-db
-    restart: unless-stopped
-    environment:
-      POSTGRES_USER: ${ECOMMERCE_DB_USER:?set in .env.docker}
-      POSTGRES_PASSWORD: ${ECOMMERCE_DB_PASSWORD:?set in .env.docker}
-      POSTGRES_DB: ${ECOMMERCE_DB_NAME:?set in .env.docker}
-    ports:
-      - "${ECOMMERCE_DB_PORT:?set in .env.docker}:5432"
-    # In-memory data dir: every container starts with a fresh, empty database.
-    # A tmpfs is used instead of omitting the mount because the image declares an
-    # anonymous volume there, which Compose would carry over on recreate.
-    tmpfs:
-      - /var/lib/postgresql
-    healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}"]
-      interval: 5s
-      timeout: 5s
-      retries: 10
+  # ecommerce-db:
+  #   image: postgres:18-alpine
+  #   container_name: ecommerce-db
+  #   restart: unless-stopped
+  #   environment:
+  #     POSTGRES_USER: ${ECOMMERCE_DB_USER:?set in .env.docker}
+  #     POSTGRES_PASSWORD: ${ECOMMERCE_DB_PASSWORD:?set in .env.docker}
+  #     POSTGRES_DB: ${ECOMMERCE_DB_NAME:?set in .env.docker}
+  #   ports:
+  #     - "${ECOMMERCE_DB_PORT:?set in .env.docker}:5432"
+  #   # In-memory data dir: every container starts with a fresh, empty database.
+  #   # A tmpfs is used instead of omitting the mount because the image declares an
+  #   # anonymous volume there, which Compose would carry over on recreate.
+  #   tmpfs:
+  #     - /var/lib/postgresql
+  #   healthcheck:
+  #     test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}"]
+  #     interval: 5s
+  #     timeout: 5s
+  #     retries: 10
 
   ecommerce-cms-db:
     image: postgres:18-alpine
