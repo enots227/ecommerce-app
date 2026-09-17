@@ -20,7 +20,10 @@ export default {
   async bootstrap({ strapi }: { strapi: Core.Strapi }) {
     const { ENV } = process.env;
     if (ENV === "dev") {
+      strapi.log.info("Development environment; seeding");
       await seedEnvironment(strapi);
+    } else {
+      strapi.log.info("Not development environment; no seeding");
     }
   },
 };

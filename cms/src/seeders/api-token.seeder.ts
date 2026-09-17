@@ -19,7 +19,10 @@ export async function seedApiToken(strapi: Core.Strapi): Promise<void> {
   };
 
   const existing = await tokens.findOne({ where: { name: TOKEN_NAME } });
-  if (existing?.accessKey === keys.accessKey) return;
+  if (existing?.accessKey === keys.accessKey) {
+    strapi.log.info("API token have already been seeded");
+    return;
+  }
 
   // create() always generates a random key, so overwrite it with the env value.
   const { id } =

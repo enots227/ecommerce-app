@@ -38,7 +38,10 @@ interface SkuDiscountSeed {
 
 export async function seedSkuDiscounts(strapi: Core.Strapi): Promise<void> {
   const discounts = strapi.documents("api::sku-discount.sku-discount");
-  if ((await discounts.count({})) > 0) return;
+  if ((await discounts.count({})) > 0) {
+    strapi.log.info("SkuDiscounts have already been seeded");
+    return;
+  }
 
   const skus = await strapi
     .documents("api::sku.sku")
@@ -78,15 +81,18 @@ export async function seedSkuDiscounts(strapi: Core.Strapi): Promise<void> {
 
 /** The price a SKU is charging right now: the lowest of those currently in effect. */
 function effectivePrice(prices: SkuPrice[], at: number): PricedSkuPrice | null {
-  return prices
-    .filter((price): price is PricedSkuPrice => price.price !== null)
-    .filter((price) => !price.startAt || Date.parse(price.startAt) <= at)
-    // A standing list price has no end date, so it applies whenever no sale is running.
-    .filter((price) => !price.endAt || Date.parse(price.endAt) > at)
-    .reduce<PricedSkuPrice | null>(
-      (lowest, price) => (!lowest || price.price < lowest.price ? price : lowest),
-      null,
-    );
+  return (
+    prices
+      .filter((price): price is PricedSkuPrice => price.price !== null)
+      .filter((price) => !price.startAt || Date.parse(price.startAt) <= at)
+      // A standing list price has no end date, so it applies whenever no sale is running.
+      .filter((price) => !price.endAt || Date.parse(price.endAt) > at)
+      .reduce<PricedSkuPrice | null>(
+        (lowest, price) =>
+          !lowest || price.price < lowest.price ? price : lowest,
+        null,
+      )
+  );
 }
 
 /** Takes either a flat amount or a percentage off, never more than half the price. */

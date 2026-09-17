@@ -6,7 +6,10 @@ export async function seedDefaultAdmin(strapi: Core.Strapi): Promise<void> {
   if (!DEV_ADMIN_EMAIL || !DEV_ADMIN_PASSWORD) return;
 
   const userService = strapi.service("admin::user");
-  if (await userService.exists()) return;
+  if (await userService.exists()) {
+    strapi.log.info("Admin user already default");
+    return;
+  }
 
   // Same path as the signup form: super admin role, active, password hashed.
   await userService.createFirstAdmin({

@@ -92,7 +92,8 @@ const CATALOG_LANDING_PAGES = {
     },
     paperbacks: {
       title: "Paperbacks",
-      summary: "Trade and mass-market paperbacks, light enough to take anywhere.",
+      summary:
+        "Trade and mass-market paperbacks, light enough to take anywhere.",
       productFilters: { format: ["TRADE_PAPERBACK", "PAPERBACK"] },
     },
     "used-books": {
@@ -139,7 +140,10 @@ export async function seedCatalogLandingPages(
   const landingPages = strapi.documents(
     "api::catalog-landing-page.catalog-landing-page",
   );
-  if ((await landingPages.count({})) > 0) return;
+  if ((await landingPages.count({})) > 0) {
+    strapi.log.info("CatalogLandingPages have already been seeded");
+    return;
+  }
 
   const catalog: CatalogLandingPages = {
     BOOK: {

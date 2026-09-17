@@ -15,6 +15,17 @@
     }
   },
   "attributes": {
+    "slug": {
+      "type": "string",
+      "pluginOptions": {
+        "i18n": {
+          "localized": false
+        }
+      },
+      "required": true,
+      "unique": true,
+      "regex": "^[A-Za-z0-9_-]+$"
+    },
     "title": {
       "type": "string",
       "pluginOptions": {

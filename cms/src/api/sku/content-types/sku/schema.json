@@ -14,9 +14,7 @@
     "type": {
       "type": "enumeration",
       "required": true,
-      "enum": [
-        "BOOK"
-      ]
+      "enum": ["BOOK"]
     },
     "prices": {
       "type": "relation",

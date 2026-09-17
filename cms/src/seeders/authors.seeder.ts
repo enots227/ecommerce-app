@@ -7,7 +7,10 @@ const CONCURRENCY = 5;
 
 export async function seedAuthors(strapi: Core.Strapi): Promise<void> {
   const authors = strapi.documents("api::author.author");
-  if ((await authors.count({})) > 0) return;
+  if ((await authors.count({})) > 0) {
+    strapi.log.info("Authors have already been seeded");
+    return;
+  }
 
   await PromisePool.withConcurrency(CONCURRENCY)
     .for(Array.from({ length: AUTHOR_COUNT }))

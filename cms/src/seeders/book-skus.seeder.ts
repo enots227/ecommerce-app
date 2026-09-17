@@ -45,7 +45,10 @@ interface BookSkuSeed {
 
 export async function seedBookSkus(strapi: Core.Strapi): Promise<void> {
   const bookSkus = strapi.documents("api::book-sku.book-sku");
-  if ((await bookSkus.count({})) > 0) return;
+  if ((await bookSkus.count({})) > 0) {
+    strapi.log.info("BookSkus have already been seeded");
+    return;
+  }
 
   const editions = await strapi
     .documents("api::book-edition.book-edition")

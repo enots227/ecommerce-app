@@ -14,7 +14,10 @@ const CONCURRENCY = 5;
 
 export async function seedBookEditions(strapi: Core.Strapi): Promise<void> {
   const editions = strapi.documents("api::book-edition.book-edition");
-  if ((await editions.count({})) > 0) return;
+  if ((await editions.count({})) > 0) {
+    strapi.log.info("BookEditions have already been seeded");
+    return;
+  }
 
   const bookIds = (await strapi.documents("api::book.book").findMany()).map(
     (book) => book.documentId,
