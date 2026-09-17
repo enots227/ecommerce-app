@@ -4,8 +4,25 @@ import type {
   Enum_Booksku_Format,
 } from "@/gql/graphql";
 
-type Book = NonNullable<BooksQuery["books"][number]>;
-type BookSku = NonNullable<Book["stockKeepingUnits"][number]>;
+type QueriedBookSku = NonNullable<
+  NonNullable<BooksQuery["books"][number]>["stockKeepingUnits"][number]
+>;
+
+/** The printing a copy belongs to. Only the product page selects one. */
+export interface Edition {
+  documentId: string;
+  name?: string | null;
+  releasedAt?: string | null;
+}
+
+/** A copy carries its edition only where the query asked for one. */
+type BookSku = QueriedBookSku & { edition?: Edition | null };
+
+/** Only the part of a book its prices are read from. */
+interface Book {
+  stockKeepingUnits: Array<BookSku | null>;
+}
+
 type SkuPrice = NonNullable<BookSku["sku"]["prices"][number]>;
 type SkuDiscount = NonNullable<SkuPrice["discounts"][number]>;
 type PricedSkuPrice = SkuPrice & { price: number };
@@ -18,8 +35,12 @@ interface Dated {
 
 /** The offer a card leads with, and the price it undercuts. */
 export interface Offer {
+  /** The BookSku this copy sells as, so a page can link back to the record. */
+  id: string;
   condition: Enum_Booksku_Condition;
   format: Enum_Booksku_Format;
+  /** The printing this copy is of, where the query selected it. */
+  edition?: Edition | null;
   /** Cents, after any promotion. */
   price: number;
   /** Cents before the promotion, only when one is running. */
@@ -119,8 +140,10 @@ function skuOffer(bookSku: BookSku, at: number): Offer | null {
     );
 
   return {
+    id: bookSku.documentId,
     condition: bookSku.condition,
     format: bookSku.format,
+    edition: bookSku.edition,
     price,
     ...(price < listPrice.price && { listPrice: listPrice.price }),
   };
@@ -138,17 +161,52 @@ function compareOffers(a: Offer, b: Offer): number {
   );
 }
 
+/** Every copy of a book currently for sale, the one to lead with first. */
+export function offers(book: Book, at: number = Date.now()): Offer[] {
+  return book.stockKeepingUnits
+    .filter((bookSku) => !!bookSku)
+    .map((bookSku) => skuOffer(bookSku, at))
+    .filter((offer) => !!offer)
+    .sort(compareOffers);
+}
+
+/**
+ * The copies a product page lists to choose between: one per edition, format
+ * and condition, priced at the cheapest copy of that combination on the shelf.
+ * A shopper picks a printing, a binding and a grade, not an individual SKU.
+ */
+export function copies(book: Book, at: number = Date.now()): Offer[] {
+  const cheapest = new Map<string, Offer>();
+
+  for (const offer of offers(book, at)) {
+    const copy = `${editionKey(offer)}-${offer.format}-${offer.condition}`;
+    const held = cheapest.get(copy);
+    if (!held || offer.price < held.price) cheapest.set(copy, offer);
+  }
+
+  return [...cheapest.values()].sort(compareOffers);
+}
+
+/** Identifies the printing a copy is of, for grouping copies by edition. */
+export function editionKey(offer: Offer): string {
+  return offer.edition?.documentId ?? "";
+}
+
+/** What an edition is called, for copies whose SKU records no printing. */
+export function editionLabel(offer: Offer): string {
+  return offer.edition?.name?.trim() || "Standard Edition";
+}
+
 /**
  * The offer a book's card leads with, or null when none are for sale. Other
  * offers stay available on the book page, so the price reads as a starting one.
  */
 export function featuredOffer(book: Book, at: number = Date.now()): Offer | null {
-  return book.stockKeepingUnits
-    .filter((bookSku) => !!bookSku)
-    .map((bookSku) => skuOffer(bookSku, at))
-    .filter((offer) => !!offer)
-    .reduce<Offer | null>(
-      (best, offer) => (!best || compareOffers(offer, best) < 0 ? offer : best),
-      null,
-    );
+  return offers(book, at)[0] ?? null;
+}
+
+/** Whole percent off the list price, or null when the copy isn't promoted. */
+export function savingsPercent(offer: Offer): number | null {
+  if (!offer.listPrice) return null;
+  return Math.round((1 - offer.price / offer.listPrice) * 100);
 }

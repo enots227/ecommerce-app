@@ -6,6 +6,7 @@ import { Flex } from "@radix-ui/themes/components/flex";
 import { Text } from "@radix-ui/themes/components/text";
 import { FC } from "react";
 import { BooksQuery } from "@/gql/graphql";
+import { authorNames } from "@/lib/authors";
 import {
   conditionLabel,
   featuredOffer,
@@ -15,22 +16,15 @@ import {
 
 type Book = NonNullable<BooksQuery["books"][number]>;
 
-function authorNames(authors: Book["authors"]): string {
-  return authors
-    .filter((author) => !!author)
-    .map((author) =>
-      [author.firstName, author.lastName].filter(Boolean).join(" "),
-    )
-    .filter((name) => name.length > 0)
-    .join(", ");
-}
-
-export const ProductCard: FC<{ book: Book }> = ({ book }) => {
+export const ProductCard: FC<{ catalogSlug?: string; book: Book }> = ({
+  catalogSlug = "-",
+  book,
+}) => {
   const byline = authorNames(book.authors);
   const offer = featuredOffer(book);
 
   return (
-    <Link href={`/books/${book.documentId}`}>
+    <Link href={`/books/${catalogSlug}/${book.slug}`}>
       <Flex direction="column" gap="3" py="4" height="100%">
         <Box position="relative" width="100%" height="230px">
           <Image

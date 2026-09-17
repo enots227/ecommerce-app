@@ -1,10 +1,16 @@
-import { queryOptions } from "@tanstack/react-query";
 import { graphql } from "@/gql";
-import { cms } from "@/lib/cms";
 
-export const BooksQuery = graphql(`
-  query Books {
-    books {
+export const BookQuery = graphql(`
+  query Book($catalogSlug: String!, $productSlug: String!) {
+    catalogLandingPages(
+      filters: { slug: { eqi: $catalogSlug } }
+      pagination: { limit: 1 }
+    ) {
+      documentId
+      title
+      slug
+    }
+    books(filters: { slug: { eqi: $productSlug } }, pagination: { limit: 1 }) {
       documentId
       slug
       title
@@ -17,6 +23,11 @@ export const BooksQuery = graphql(`
         documentId
         condition
         format
+        edition {
+          documentId
+          name
+          releasedAt
+        }
         sku {
           prices {
             price
@@ -34,8 +45,3 @@ export const BooksQuery = graphql(`
     }
   }
 `);
-
-export const booksQuery = queryOptions({
-  queryKey: ["books"],
-  queryFn: () => cms.request(BooksQuery),
-});

@@ -1,10 +1,12 @@
 "use client";
 
+import { IntlData } from "@/intl";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
-import { useState, type ReactNode } from "react";
+import { FC, useState, type ReactNode } from "react";
+import { IntlProvider } from "react-intl";
 
-export function Providers({ children }: { children: ReactNode }) {
+const TanStackQueryProvider: FC<{ children: ReactNode }> = ({ children }) => {
   // Created in state so each browser session gets one client and server requests never share one.
   const [queryClient] = useState(
     () =>
@@ -22,4 +24,15 @@ export function Providers({ children }: { children: ReactNode }) {
       <ReactQueryDevtools />
     </QueryClientProvider>
   );
-}
+};
+
+export const Providers: FC<{ children: ReactNode; intl: IntlData }> = ({
+  children,
+  intl: { lang, messages },
+}) => (
+  <TanStackQueryProvider>
+    <IntlProvider messages={messages} locale={lang} defaultLocale="en-US">
+      {children}
+    </IntlProvider>
+  </TanStackQueryProvider>
+);

@@ -13,44 +13,29 @@ import {
 } from "@tanstack/react-query";
 import { CatalogLandingPageBySlugQuery } from "@/lib/queries/catalog-landing-page";
 import { cms } from "@/lib/cms";
+import { PRODUCT_TYPE_TO_LABEL, productTypeFromSlug } from "@/lib/product-type";
 import { booksQuery } from "@/lib/queries/books";
 
-// @todo better product type definition generation
-enum ProductType {
-  BOOK = "BOOK",
-}
-
-const PRODUCT_TYPE_TO_LABEL = {
-  [ProductType.BOOK]: {
-    one: "Book",
-    other: "Books",
-  },
-} as const satisfies Record<
-  ProductType,
-  Partial<Record<Intl.LDMLPluralRule, string>>
->;
-
-const PRODUCT_SLUG_TO_TYPE = {
-  books: ProductType.BOOK,
-};
-
 type PageProps = {
-  params: Promise<{ productTypeSlug: string; catalogSlug: string }>;
+  params: Promise<{ productType: string; catalog: string }>;
 };
 
 export default async function Page({ params }: PageProps) {
-  const { productTypeSlug, catalogSlug } = await params;
-  const productType =
-    PRODUCT_SLUG_TO_TYPE[productTypeSlug as keyof typeof PRODUCT_SLUG_TO_TYPE];
+  const slugs = await params;
+  const productType = productTypeFromSlug(slugs.productType);
+
+  if (!productType) {
+    notFound();
+  }
 
   const queryClient = new QueryClient();
 
   const data = await cms.request(CatalogLandingPageBySlugQuery, {
-    slug: catalogSlug,
+    slug: slugs.catalog,
   });
-  const page = data.catalogLandingPages[0];
+  const catalog = data.catalogLandingPages[0];
 
-  if (!page) {
+  if (!catalog) {
     notFound();
   }
 
@@ -70,17 +55,17 @@ export default async function Page({ params }: PageProps) {
               /
             </Text>
             <Text size="1" color="gray">
-              {page.title}
+              {catalog.title}
             </Text>
           </Flex>
 
           <Box>
             <Heading as="h1" size="7">
-              {page.title}
+              {catalog.title}
             </Heading>
           </Box>
 
-          <ProductGrid />
+          <ProductGrid catalogSlug={slugs.catalog} />
         </Flex>
       </Container>
     </HydrationBoundary>

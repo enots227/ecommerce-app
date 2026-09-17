@@ -11,7 +11,11 @@ import { Text } from "@radix-ui/themes/components/text";
 import { FC } from "react";
 import { ProductCard } from "./product-card";
 
-export const ProductGrid: FC = () => {
+type ProductGridProps = {
+  catalogSlug: string;
+};
+
+export const ProductGrid: FC<ProductGridProps> = ({ catalogSlug }) => {
   const { data, isPending } = useQuery(booksQuery);
 
   if (isPending) {
@@ -62,7 +66,11 @@ export const ProductGrid: FC = () => {
         gapY="0"
       >
         {books.map((book) => (
-          <ProductCard key={`book-${book.documentId}`} book={book} />
+          <ProductCard
+            key={`book-${book.documentId}`}
+            catalogSlug={catalogSlug}
+            book={book}
+          />
         ))}
       </Grid>
     </Box>
