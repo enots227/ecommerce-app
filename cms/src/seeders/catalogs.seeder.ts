@@ -17,111 +17,109 @@ type BookFilters = {
   onSale?: boolean;
 };
 
-interface Catalog {
-  title: string;
-  summary?: string;
+/** Mirrors the `grid.grid` component, without its `__component` discriminator. */
+interface Grid {
+  entity: CatalogEntity;
   filters: BookFilters;
 }
 
-type CatalogsByEntity = Record<CatalogEntity, Record<string, Catalog>>;
+interface Catalog {
+  title: string;
+  summary?: string;
+  layout: Grid[];
+}
 
-// Keyed by product type, then by slug.
-const CATALOGS_BY_TYPE = {
-  BOOK: {
-    fiction: {
-      title: "Fiction",
-      summary: "Novels and short stories from every corner of the imagination.",
-      filters: {
-        category: [
-          "adventure",
-          "classic",
-          "drama",
-          "fantasy",
-          "historical-fiction",
-          "horror",
-          "mystery",
-          "romance",
-          "science-fiction",
-          "thriller",
-          "western",
-        ],
-      },
-    },
-    "non-fiction": {
-      title: "Non-Fiction",
-      summary: "Biographies, memoirs, and big ideas about the real world.",
-      filters: {
-        category: [
-          "biography",
-          "business",
-          "memoir",
-          "philosophy",
-          "psychology",
-          "religion",
-        ],
-      },
-    },
-    "mystery-thriller": {
-      title: "Mystery & Thriller",
-      summary: "Whodunits, detectives, and page-turners you won't put down.",
-      filters: { category: ["mystery", "thriller", "detective"] },
-    },
-    "science-fiction-fantasy": {
-      title: "Science Fiction & Fantasy",
-      summary: "Distant futures, other worlds, and magic of every kind.",
-      filters: { category: ["science-fiction", "fantasy"] },
-    },
-    romance: {
-      title: "Romance",
-      summary: "Love stories, from sweet to steamy.",
-      filters: { category: ["romance"] },
-    },
-    hardcovers: {
-      title: "Hardcovers",
-      summary: "Durable, handsome editions built for the shelf.",
-      filters: { format: ["HARDCOVER"] },
-    },
-    paperbacks: {
-      title: "Paperbacks",
-      summary:
-        "Trade and mass-market paperbacks, light enough to take anywhere.",
-      filters: { format: ["TRADE_PAPERBACK", "PAPERBACK"] },
-    },
-    "used-books": {
-      title: "Used Books",
-      summary: "Pre-loved copies at a fraction of the new price.",
-      filters: {
-        condition: ["PRISTINE", "EXCELLENT", "GOOD", "ACCEPTABLE"],
-      },
-    },
-    "like-new": {
-      title: "Like New",
-      summary: "Used copies in pristine or excellent condition.",
-      filters: { condition: ["PRISTINE", "EXCELLENT"] },
-    },
-    "books-under-10": {
-      title: "Books Under $10",
-      summary: "Great reads that won't break the bank.",
-      filters: { maxPrice: 1000 },
-    },
-    "bargain-paperbacks": {
-      title: "Bargain Paperbacks",
-      filters: { format: ["PAPERBACK"], maxPrice: 1000 },
-    },
-    "on-sale": {
-      title: "On Sale",
-      summary: "Limited-time discounts across the store.",
-      filters: { onSale: true },
-    },
+// Keyed by slug.
+const CATALOGS = {
+  fiction: {
+    title: "Fiction",
+    summary: "Novels and short stories from every corner of the imagination.",
+    layout: bookGrid({
+      category: [
+        "adventure",
+        "classic",
+        "drama",
+        "fantasy",
+        "historical-fiction",
+        "horror",
+        "mystery",
+        "romance",
+        "science-fiction",
+        "thriller",
+        "western",
+      ],
+    }),
   },
-  BOOK_CATEGORY: {
-    genre: {
-      title: "Genres",
-      summary: "",
-      filters: {},
-    },
+  "non-fiction": {
+    title: "Non-Fiction",
+    summary: "Biographies, memoirs, and big ideas about the real world.",
+    layout: bookGrid({
+      category: [
+        "biography",
+        "business",
+        "memoir",
+        "philosophy",
+        "psychology",
+        "religion",
+      ],
+    }),
   },
-} satisfies CatalogsByEntity;
+  "mystery-thriller": {
+    title: "Mystery & Thriller",
+    summary: "Whodunits, detectives, and page-turners you won't put down.",
+    layout: bookGrid({ category: ["mystery", "thriller", "detective"] }),
+  },
+  "science-fiction-fantasy": {
+    title: "Science Fiction & Fantasy",
+    summary: "Distant futures, other worlds, and magic of every kind.",
+    layout: bookGrid({ category: ["science-fiction", "fantasy"] }),
+  },
+  romance: {
+    title: "Romance",
+    summary: "Love stories, from sweet to steamy.",
+    layout: bookGrid({ category: ["romance"] }),
+  },
+  hardcovers: {
+    title: "Hardcovers",
+    summary: "Durable, handsome editions built for the shelf.",
+    layout: bookGrid({ format: ["HARDCOVER"] }),
+  },
+  paperbacks: {
+    title: "Paperbacks",
+    summary: "Trade and mass-market paperbacks, light enough to take anywhere.",
+    layout: bookGrid({ format: ["TRADE_PAPERBACK", "PAPERBACK"] }),
+  },
+  "used-books": {
+    title: "Used Books",
+    summary: "Pre-loved copies at a fraction of the new price.",
+    layout: bookGrid({
+      condition: ["PRISTINE", "EXCELLENT", "GOOD", "ACCEPTABLE"],
+    }),
+  },
+  "like-new": {
+    title: "Like New",
+    summary: "Used copies in pristine or excellent condition.",
+    layout: bookGrid({ condition: ["PRISTINE", "EXCELLENT"] }),
+  },
+  "books-under-10": {
+    title: "Books Under $10",
+    summary: "Great reads that won't break the bank.",
+    layout: bookGrid({ maxPrice: 1000 }),
+  },
+  "bargain-paperbacks": {
+    title: "Bargain Paperbacks",
+    layout: bookGrid({ format: ["PAPERBACK"], maxPrice: 1000 }),
+  },
+  "on-sale": {
+    title: "On Sale",
+    summary: "Limited-time discounts across the store.",
+    layout: bookGrid({ onSale: true }),
+  },
+  genre: {
+    title: "Genres",
+    layout: [{ entity: "BOOK_CATEGORY", filters: {} }],
+  },
+} satisfies Record<string, Catalog>;
 
 const FAKE_BOOK_PAGE_COUNT = 25;
 const FAKE_FORMATS: NonNullable<BookFilters["format"]> = [
@@ -140,33 +138,26 @@ export async function seedCatalogs(strapi: Core.Strapi): Promise<void> {
   }
 
   const genres = genreCatalogs();
-  const catalogsByType: CatalogsByEntity = {
-    BOOK: {
-      ...fakeBookCatalog(FAKE_BOOK_PAGE_COUNT, [
-        ...Object.keys(genres),
-        ...Object.keys(CATALOGS_BY_TYPE.BOOK),
-      ]),
-      // Curated pages win a slug clash, e.g. "romance" keeps its summary.
-      ...genres,
-      ...CATALOGS_BY_TYPE.BOOK,
-    },
-    BOOK_CATEGORY: {
-      ...CATALOGS_BY_TYPE.BOOK_CATEGORY,
-    },
+  const pages: Record<string, Catalog> = {
+    ...fakeBookCatalog(FAKE_BOOK_PAGE_COUNT, [
+      ...Object.keys(genres),
+      ...Object.keys(CATALOGS),
+    ]),
+    // Curated pages win a slug clash, e.g. "romance" keeps its summary.
+    ...genres,
+    ...CATALOGS,
   };
 
-  const payloads = (
-    Object.entries(catalogsByType) as [
-      CatalogEntity,
-      CatalogsByEntity[CatalogEntity],
-    ][]
-  ).flatMap(([entity, pages]) =>
-    Object.entries(pages).map(([slug, { summary, filters, ...page }]) => ({
-      slug,
+  const payloads = Object.entries(pages).map(
+    ([slug, { summary, layout, ...page }]) => ({
+      urlPath: catalogUrlPath(slug),
       ...page,
       summary: summary ? toBlocks(summary) : undefined,
-      layout: [{ __component: "grid.grid" as const, entity, filters }],
-    })),
+      layout: layout.map((grid) => ({
+        __component: "grid.grid" as const,
+        ...grid,
+      })),
+    }),
   );
 
   await PromisePool.withConcurrency(CONCURRENCY)
@@ -179,9 +170,23 @@ export async function seedCatalogs(strapi: Core.Strapi): Promise<void> {
   strapi.log.info(`Seeded ${payloads.length} catalogs`);
 }
 
+function catalogUrlPath(slug: string): string {
+  return `/books/${slug}/`;
+}
+
 /** The slug of a genre's own catalog, which is also its value in category filters. */
-export function genreSlug(genre: string): string {
+function genreSlug(genre: string): string {
   return faker.helpers.slugify(genre).toLowerCase();
+}
+
+/** The URL path of a genre's own catalog. */
+export function genreUrlPath(genre: string): string {
+  return catalogUrlPath(genreSlug(genre));
+}
+
+/** A single grid listing the books that match `filters`. */
+function bookGrid(filters: BookFilters): Grid[] {
+  return [{ entity: "BOOK", filters }];
 }
 
 /**
@@ -192,7 +197,7 @@ function genreCatalogs(): Record<string, Catalog> {
   return Object.fromEntries(
     faker.definitions.book.genre.map((genre) => [
       genreSlug(genre),
-      { title: genre, filters: { category: [genreSlug(genre)] } },
+      { title: genre, layout: bookGrid({ category: [genreSlug(genre)] }) },
     ]),
   );
 }
@@ -223,7 +228,7 @@ function fakeBookCatalog(
       summary: faker.datatype.boolean({ probability: 0.8 })
         ? faker.lorem.sentences({ min: 1, max: 3 })
         : undefined,
-      filters: {
+      layout: bookGrid({
         category: [genreSlug(genre)],
         // Some pages narrow the genre further, as a merchandiser might.
         format: faker.helpers.maybe(
@@ -235,7 +240,7 @@ function fakeBookCatalog(
           { probability: 0.2 },
         ),
         onSale: faker.helpers.maybe(() => true, { probability: 0.1 }),
-      },
+      }),
     };
   }
 

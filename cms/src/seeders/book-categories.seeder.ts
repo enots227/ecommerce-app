@@ -1,7 +1,7 @@
 import { Core } from "@strapi/strapi";
 import { faker } from "@faker-js/faker";
 import { PromisePool } from "@supercharge/promise-pool";
-import { genreSlug } from "./catalogs.seeder";
+import { genreUrlPath } from "./catalogs.seeder";
 
 const CONCURRENCY = 5;
 
@@ -29,13 +29,13 @@ export async function seedBookCategories(strapi: Core.Strapi): Promise<void> {
   const catalogIdBySlug = new Map(
     (
       await strapi.documents("api::catalog.catalog").findMany({
-        filters: { type: "BOOK", slug: { $in: genres.map(genreSlug) } },
-        fields: ["slug"],
+        filters: { urlPath: { $in: genres.map(genreUrlPath) } },
+        fields: ["urlPath"],
       })
-    ).map((catalog) => [catalog.slug, catalog.documentId]),
+    ).map((catalog) => [catalog.urlPath, catalog.documentId]),
   );
   const catalogIdOf = (genre: string) => {
-    const catalogId = catalogIdBySlug.get(genreSlug(genre));
+    const catalogId = catalogIdBySlug.get(genreUrlPath(genre));
     if (!catalogId) {
       throw new Error(`No catalog for book category "${genre}"`);
     }

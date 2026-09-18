@@ -24,7 +24,7 @@
       },
       "required": true
     },
-    "slug": {
+    "urlPath": {
       "type": "string",
       "pluginOptions": {
         "i18n": {
@@ -33,7 +33,7 @@
       },
       "required": true,
       "unique": true,
-      "regex": "^[A-Za-z0-9_-]+$"
+      "regex": "^\\/books\\/[A-Za-z0-9_-]+\\/$"
     },
     "summary": {
       "type": "blocks",
