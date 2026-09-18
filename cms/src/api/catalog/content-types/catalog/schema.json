@@ -15,19 +15,6 @@
     }
   },
   "attributes": {
-    "type": {
-      "type": "enumeration",
-      "pluginOptions": {
-        "i18n": {
-          "localized": false
-        }
-      },
-      "required": true,
-      "enum": [
-        "BOOK",
-        "BOOK_CATEGORY"
-      ]
-    },
     "title": {
       "type": "string",
       "pluginOptions": {
@@ -45,7 +32,8 @@
         }
       },
       "required": true,
-      "unique": true
+      "unique": true,
+      "regex": "^[A-Za-z0-9_-]+$"
     },
     "summary": {
       "type": "blocks",
@@ -55,13 +43,16 @@
         }
       }
     },
-    "filters": {
-      "type": "json",
+    "layout": {
+      "type": "dynamiczone",
       "pluginOptions": {
         "i18n": {
           "localized": true
         }
-      }
+      },
+      "components": [
+        "grid.grid"
+      ]
     }
   }
 }

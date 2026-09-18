@@ -671,7 +671,7 @@ export interface ApiCatalogCatalog extends Struct.CollectionTypeSchema {
     createdAt: Schema.Attribute.DateTime;
     createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;
-    filters: Schema.Attribute.JSON &
+    layout: Schema.Attribute.DynamicZone<['grid.grid']> &
       Schema.Attribute.SetPluginOptions<{
         i18n: {
           localized: true;
@@ -702,13 +702,6 @@ export interface ApiCatalogCatalog extends Struct.CollectionTypeSchema {
       Schema.Attribute.SetPluginOptions<{
         i18n: {
           localized: true;
-        };
-      }>;
-    type: Schema.Attribute.Enumeration<['BOOK', 'BOOK_CATEGORY']> &
-      Schema.Attribute.Required &
-      Schema.Attribute.SetPluginOptions<{
-        i18n: {
-          localized: false;
         };
       }>;
     updatedAt: Schema.Attribute.DateTime;

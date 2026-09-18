@@ -1,0 +1,22 @@
+{
+  "collectionName": "components_grid_grids",
+  "info": {
+    "displayName": "Grid",
+    "icon": "apps"
+  },
+  "options": {},
+  "attributes": {
+    "entity": {
+      "type": "enumeration",
+      "required": true,
+      "enum": [
+        "BOOK",
+        "BOOK_CATEGORY"
+      ]
+    },
+    "filters": {
+      "type": "json"
+    }
+  },
+  "config": {}
+}

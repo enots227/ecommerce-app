@@ -4,7 +4,7 @@ import { PromisePool } from "@supercharge/promise-pool";
 
 type ProductType = "BOOK";
 
-type CatalogType = "BOOK_CATEGORY" | ProductType;
+type CatalogEntity = "BOOK_CATEGORY" | ProductType;
 
 // A type alias rather than an interface, so it is assignable to the JSON attribute.
 type BookFilters = {
@@ -23,7 +23,7 @@ interface Catalog {
   filters: BookFilters;
 }
 
-type CatalogsByType = Record<CatalogType, Record<string, Catalog>>;
+type CatalogsByEntity = Record<CatalogEntity, Record<string, Catalog>>;
 
 // Keyed by product type, then by slug.
 const CATALOGS_BY_TYPE = {
@@ -121,7 +121,7 @@ const CATALOGS_BY_TYPE = {
       filters: {},
     },
   },
-} satisfies CatalogsByType;
+} satisfies CatalogsByEntity;
 
 const FAKE_BOOK_PAGE_COUNT = 25;
 const FAKE_FORMATS: NonNullable<BookFilters["format"]> = [
@@ -140,7 +140,7 @@ export async function seedCatalogs(strapi: Core.Strapi): Promise<void> {
   }
 
   const genres = genreCatalogs();
-  const catalogsByType: CatalogsByType = {
+  const catalogsByType: CatalogsByEntity = {
     BOOK: {
       ...fakeBookCatalog(FAKE_BOOK_PAGE_COUNT, [
         ...Object.keys(genres),
@@ -157,15 +157,15 @@ export async function seedCatalogs(strapi: Core.Strapi): Promise<void> {
 
   const payloads = (
     Object.entries(catalogsByType) as [
-      CatalogType,
-      CatalogsByType[CatalogType],
+      CatalogEntity,
+      CatalogsByEntity[CatalogEntity],
     ][]
-  ).flatMap(([type, pages]) =>
-    Object.entries(pages).map(([slug, { summary, ...page }]) => ({
-      type,
+  ).flatMap(([entity, pages]) =>
+    Object.entries(pages).map(([slug, { summary, filters, ...page }]) => ({
       slug,
       ...page,
       summary: summary ? toBlocks(summary) : undefined,
+      layout: [{ __component: "grid.grid" as const, entity, filters }],
     })),
   );
 
@@ -176,7 +176,7 @@ export async function seedCatalogs(strapi: Core.Strapi): Promise<void> {
       throw error;
     })
     .process((data) => catalogs.create({ data, status: "published" }));
-  strapi.log.info(`Seeded ${payloads.length} catalog landing pages`);
+  strapi.log.info(`Seeded ${payloads.length} catalogs`);
 }
 
 /** The slug of a genre's own catalog, which is also its value in category filters. */
