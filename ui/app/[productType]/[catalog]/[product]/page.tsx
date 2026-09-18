@@ -16,7 +16,7 @@ import { conditionLabel, copies, formatLabel } from "@/lib/pricing";
 import { PRODUCT_TYPE_TO_LABEL, productTypeFromSlug } from "@/lib/product-type";
 import { BookQuery } from "@/lib/queries/book";
 import { BooksQuery } from "@/lib/queries/books";
-import { ProductCard } from "../product-card";
+import { EntityCard } from "@/components/catalog/card/card";
 import { BuyBox } from "./buy-box";
 import { CopyOptions, selectCopy } from "./copy-options";
 import { FormattedMessage } from "react-intl";
@@ -58,7 +58,7 @@ export default async function Page({ params, searchParams }: PageProps) {
   }
 
   const data = await cms.request(BookQuery, {
-    catalogSlug: slugs.catalog,
+    catalogUrlPath: `/books/${slugs.catalog}/`,
     productSlug: slugs.product,
   });
   const catalog = data.catalogs[0];
@@ -147,9 +147,7 @@ export default async function Page({ params, searchParams }: PageProps) {
                     className="transition-colors hover:bg-(--accent-a4) active:bg-(--accent-a5)"
                     asChild
                   >
-                    <Link
-                      href={`/${slugs.productType}/${category.catalog.slug}`}
-                    >
+                    <Link href={category.catalog.urlPath}>
                       {category.title}
                     </Link>
                   </Badge>
@@ -233,11 +231,7 @@ export default async function Page({ params, searchParams }: PageProps) {
           <Separator size="4" />
           <Grid columns={{ initial: "2", sm: "4" }} gapX="5" gapY="0">
             {related.map((other) => (
-              <ProductCard
-                key={`book-${other.documentId}`}
-                catalogSlug={slugs.catalog}
-                book={other}
-              />
+              <EntityCard key={`book-${other.documentId}`} book={other} />
             ))}
           </Grid>
         </Box>

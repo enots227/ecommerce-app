@@ -1,14 +1,14 @@
 import { graphql } from "@/gql";
 
 export const BookQuery = graphql(`
-  query Book($catalogSlug: String!, $productSlug: String!) {
+  query Book($catalogUrlPath: String!, $productSlug: String!) {
     catalogs(
-      filters: { slug: { eqi: $catalogSlug } }
+      filters: { urlPath: { eqi: $catalogUrlPath } }
       pagination: { limit: 1 }
     ) {
       documentId
       title
-      slug
+      urlPath
     }
     books(filters: { slug: { eqi: $productSlug } }, pagination: { limit: 1 }) {
       documentId
@@ -24,7 +24,7 @@ export const BookQuery = graphql(`
         title
         catalog {
           documentId
-          slug
+          urlPath
         }
       }
       stockKeepingUnits {

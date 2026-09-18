@@ -1,13 +1,22 @@
 import { graphql } from "@/gql";
 
 export const CatalogQuery = graphql(`
-  query Catalog($slug: String!) {
-    catalogs(filters: { slug: { eqi: $slug } }, pagination: { limit: 1 }) {
+  query Catalog($urlPath: String!) {
+    catalogs(
+      filters: { urlPath: { eqi: $urlPath } }
+      pagination: { limit: 1 }
+    ) {
       documentId
       title
-      slug
+      urlPath
       summary
-      filters
+      layout {
+        ... on ComponentGridGrid {
+          __typename
+          entity
+          filters
+        }
+      }
     }
   }
 `);
