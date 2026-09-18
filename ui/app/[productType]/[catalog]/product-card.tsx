@@ -3,6 +3,7 @@ import Link from "next/link";
 import { Badge } from "@radix-ui/themes/components/badge";
 import { Box } from "@radix-ui/themes/components/box";
 import { Flex } from "@radix-ui/themes/components/flex";
+import { Separator } from "@radix-ui/themes/components/separator";
 import { Text } from "@radix-ui/themes/components/text";
 import { FC } from "react";
 import { BooksQuery } from "@/gql/graphql";
@@ -24,8 +25,11 @@ export const ProductCard: FC<{ catalogSlug?: string; book: Book }> = ({
   const offer = featuredOffer(book);
 
   return (
-    <Link href={`/books/${catalogSlug}/${book.slug}`}>
-      <Flex direction="column" gap="3" py="4" height="100%">
+    <Link
+      href={`/books/${catalogSlug}/${book.slug}`}
+      className="rounded-md border border-(--gray-a6) transition-colors hover:bg-(--gray-a2) active:bg-(--gray-a3)"
+    >
+      <Flex direction="column" gap="3" px="3" py="4" height="100%">
         <Box position="relative" width="100%" height="230px">
           <Image
             src="/book-cover-placeholder.svg"
@@ -48,6 +52,12 @@ export const ProductCard: FC<{ catalogSlug?: string; book: Book }> = ({
         </Flex>
 
         <Box flexGrow="1" />
+
+        <Separator
+          size="4"
+          mx="-3"
+          style={{ width: "calc(100% + 2 * var(--space-3))" }}
+        />
 
         {offer ? (
           <Box>

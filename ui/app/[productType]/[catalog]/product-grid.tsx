@@ -63,7 +63,8 @@ export const ProductGrid: FC<ProductGridProps> = ({ catalogSlug }) => {
       <Grid
         columns={{ initial: "1", xs: "2", sm: "3", lg: "4" }}
         gapX="5"
-        gapY="0"
+        gapY="5"
+        mt="4"
       >
         {books.map((book) => (
           <ProductCard

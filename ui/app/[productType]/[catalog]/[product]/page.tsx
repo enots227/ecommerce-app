@@ -144,7 +144,7 @@ export default async function Page({ params, searchParams }: PageProps) {
                     key={category.documentId}
                     size="2"
                     color="gray"
-                    className="transition-colors hover:bg-(--accent-a4)"
+                    className="transition-colors hover:bg-(--accent-a4) active:bg-(--accent-a5)"
                     asChild
                   >
                     <Link
