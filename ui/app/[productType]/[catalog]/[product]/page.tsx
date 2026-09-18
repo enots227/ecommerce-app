@@ -60,7 +60,7 @@ export default async function Page({ params, searchParams }: PageProps) {
     catalogSlug: slugs.catalog,
     productSlug: slugs.product,
   });
-  const catalog = data.catalogLandingPages[0];
+  const catalog = data.catalogs[0];
   const book = data.books[0];
 
   if (!catalog || !book) {

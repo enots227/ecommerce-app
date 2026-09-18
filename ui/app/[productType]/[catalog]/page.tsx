@@ -11,7 +11,7 @@ import {
   HydrationBoundary,
   QueryClient,
 } from "@tanstack/react-query";
-import { CatalogLandingPageBySlugQuery } from "@/lib/queries/catalog-landing-page";
+import { CatalogQuery } from "@/lib/queries/catalog";
 import { cms } from "@/lib/cms";
 import { PRODUCT_TYPE_TO_LABEL, productTypeFromSlug } from "@/lib/product-type";
 import { booksQuery } from "@/lib/queries/books";
@@ -30,10 +30,10 @@ export default async function Page({ params }: PageProps) {
 
   const queryClient = new QueryClient();
 
-  const data = await cms.request(CatalogLandingPageBySlugQuery, {
+  const data = await cms.request(CatalogQuery, {
     slug: slugs.catalog,
   });
-  const catalog = data.catalogLandingPages[0];
+  const catalog = data.catalogs[0];
 
   if (!catalog) {
     notFound();

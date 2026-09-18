@@ -2,7 +2,7 @@ import { graphql } from "@/gql";
 
 export const BookQuery = graphql(`
   query Book($catalogSlug: String!, $productSlug: String!) {
-    catalogLandingPages(
+    catalogs(
       filters: { slug: { eqi: $catalogSlug } }
       pagination: { limit: 1 }
     ) {

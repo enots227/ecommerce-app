@@ -599,35 +599,65 @@ export interface ApiBookBook extends Struct.CollectionTypeSchema {
   };
 }
 
-export interface ApiCatalogLandingPageCatalogLandingPage
-  extends Struct.CollectionTypeSchema {
-  collectionName: 'catalog_landing_pages';
+export interface ApiCatalogCatalog extends Struct.CollectionTypeSchema {
+  collectionName: 'catalogs';
   info: {
-    displayName: 'CatalogLandingPage';
-    pluralName: 'catalog-landing-pages';
-    singularName: 'catalog-landing-page';
+    displayName: 'Catalog';
+    pluralName: 'catalogs';
+    singularName: 'catalog';
   };
   options: {
     draftAndPublish: true;
+  };
+  pluginOptions: {
+    i18n: {
+      localized: true;
+    };
   };
   attributes: {
     createdAt: Schema.Attribute.DateTime;
     createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;
-    locale: Schema.Attribute.String & Schema.Attribute.Private;
+    locale: Schema.Attribute.String;
     localizations: Schema.Attribute.Relation<
       'oneToMany',
-      'api::catalog-landing-page.catalog-landing-page'
-    > &
-      Schema.Attribute.Private;
-    productFilters: Schema.Attribute.JSON;
-    productType: Schema.Attribute.Enumeration<['BOOK']>;
+      'api::catalog.catalog'
+    >;
+    productFilters: Schema.Attribute.JSON &
+      Schema.Attribute.SetPluginOptions<{
+        i18n: {
+          localized: true;
+        };
+      }>;
+    productType: Schema.Attribute.Enumeration<['BOOK']> &
+      Schema.Attribute.Required &
+      Schema.Attribute.SetPluginOptions<{
+        i18n: {
+          localized: false;
+        };
+      }>;
     publishedAt: Schema.Attribute.DateTime;
     slug: Schema.Attribute.String &
       Schema.Attribute.Required &
-      Schema.Attribute.Unique;
-    summary: Schema.Attribute.Blocks;
-    title: Schema.Attribute.String & Schema.Attribute.Required;
+      Schema.Attribute.Unique &
+      Schema.Attribute.SetPluginOptions<{
+        i18n: {
+          localized: false;
+        };
+      }>;
+    summary: Schema.Attribute.Blocks &
+      Schema.Attribute.SetPluginOptions<{
+        i18n: {
+          localized: true;
+        };
+      }>;
+    title: Schema.Attribute.String &
+      Schema.Attribute.Required &
+      Schema.Attribute.SetPluginOptions<{
+        i18n: {
+          localized: true;
+        };
+      }>;
     updatedAt: Schema.Attribute.DateTime;
     updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;
@@ -1250,7 +1280,7 @@ declare module '@strapi/strapi' {
       'api::book-edition.book-edition': ApiBookEditionBookEdition;
       'api::book-sku.book-sku': ApiBookSkuBookSku;
       'api::book.book': ApiBookBook;
-      'api::catalog-landing-page.catalog-landing-page': ApiCatalogLandingPageCatalogLandingPage;
+      'api::catalog.catalog': ApiCatalogCatalog;
       'api::sku-discount.sku-discount': ApiSkuDiscountSkuDiscount;
       'api::sku-price.sku-price': ApiSkuPriceSkuPrice;
       'api::sku.sku': ApiSkuSku;

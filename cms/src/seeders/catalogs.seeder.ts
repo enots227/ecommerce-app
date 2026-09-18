@@ -23,16 +23,13 @@ type BookFilters = {
   onSale?: boolean;
 };
 
-interface CatalogLandingPageSeed {
+interface Catalog {
   title: string;
   summary?: string;
   productFilters: BookFilters;
 }
 
-type CatalogLandingPages = Record<
-  ProductType,
-  Record<string, CatalogLandingPageSeed>
->;
+type ProductTypeToCatalogs = Record<ProductType, Record<string, Catalog>>;
 
 // Keyed by product type, then by slug.
 const CATALOG_LANDING_PAGES = {
@@ -123,7 +120,7 @@ const CATALOG_LANDING_PAGES = {
       productFilters: { onSale: true },
     },
   },
-} satisfies CatalogLandingPages;
+} satisfies ProductTypeToCatalogs;
 
 const FAKE_BOOK_PAGE_COUNT = 25;
 const FAKE_FORMATS: NonNullable<BookFilters["format"]> = [
@@ -134,20 +131,16 @@ const FAKE_FORMATS: NonNullable<BookFilters["format"]> = [
 const FAKE_MAX_PRICES = [1000, 1500, 2000, 2500];
 const CONCURRENCY = 5;
 
-export async function seedCatalogLandingPages(
-  strapi: Core.Strapi,
-): Promise<void> {
-  const landingPages = strapi.documents(
-    "api::catalog-landing-page.catalog-landing-page",
-  );
-  if ((await landingPages.count({})) > 0) {
-    strapi.log.info("CatalogLandingPages have already been seeded");
+export async function seedCatalogs(strapi: Core.Strapi): Promise<void> {
+  const catalogs = strapi.documents("api::catalog.catalog");
+  if ((await catalogs.count({})) > 0) {
+    strapi.log.info("Catalogs have already been seeded");
     return;
   }
 
-  const catalog: CatalogLandingPages = {
+  const catalog: ProductTypeToCatalogs = {
     BOOK: {
-      ...fakeBookLandingPages(
+      ...fakeBookCatalog(
         FAKE_BOOK_PAGE_COUNT,
         Object.keys(CATALOG_LANDING_PAGES.BOOK),
       ),
@@ -156,7 +149,10 @@ export async function seedCatalogLandingPages(
   };
 
   const payloads = (
-    Object.entries(catalog) as [ProductType, CatalogLandingPages[ProductType]][]
+    Object.entries(catalog) as [
+      ProductType,
+      ProductTypeToCatalogs[ProductType],
+    ][]
   ).flatMap(([productType, pages]) =>
     Object.entries(pages).map(([slug, { summary, ...page }]) => ({
       productType,
@@ -172,7 +168,7 @@ export async function seedCatalogLandingPages(
     .handleError((error) => {
       throw error;
     })
-    .process((data) => landingPages.create({ data, status: "published" }));
+    .process((data) => catalogs.create({ data, status: "published" }));
   strapi.log.info(`Seeded ${payloads.length} catalog landing pages`);
 }
 
@@ -184,12 +180,12 @@ export function generateFakeSlug(genre = faker.book.genre()): string {
 }
 
 /** Fake book landing pages, each filtering on one genre, keyed by a unique slug. */
-function fakeBookLandingPages(
+function fakeBookCatalog(
   count: number,
   takenSlugs: Iterable<string>,
-): Record<string, CatalogLandingPageSeed> {
+): Record<string, Catalog> {
   const taken = new Set(takenSlugs);
-  const pages: Record<string, CatalogLandingPageSeed> = {};
+  const pages: Record<string, Catalog> = {};
 
   while (Object.keys(pages).length < count) {
     const genre = faker.book.genre();
