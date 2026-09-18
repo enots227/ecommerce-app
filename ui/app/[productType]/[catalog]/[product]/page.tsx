@@ -1,6 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import { Badge } from "@radix-ui/themes/components/badge";
 import { Box } from "@radix-ui/themes/components/box";
 import { Container } from "@radix-ui/themes/components/container";
 import * as DataList from "@radix-ui/themes/components/data-list";
@@ -72,6 +73,7 @@ export default async function Page({ params, searchParams }: PageProps) {
   const productPath = `${catalogPath}/${slugs.product}`;
 
   const byline = authorNames(book.authors);
+  const categories = book.categories.filter((category) => !!category);
   const available = copies(book);
   const selected = selectCopy(available, await searchParams);
   const releasedAt = formatReleaseDate(selected?.edition?.releasedAt);
@@ -134,6 +136,25 @@ export default async function Page({ params, searchParams }: PageProps) {
               <Text as="p" size="3" color="gray">
                 by {byline}
               </Text>
+            )}
+            {categories.length > 0 && (
+              <Flex gap="2" mt="3" wrap="wrap">
+                {categories.map((category) => (
+                  <Badge
+                    key={category.documentId}
+                    size="2"
+                    color="gray"
+                    className="transition-colors hover:bg-(--accent-a4)"
+                    asChild
+                  >
+                    <Link
+                      href={`/${slugs.productType}/${category.catalog.slug}`}
+                    >
+                      {category.title}
+                    </Link>
+                  </Badge>
+                ))}
+              </Flex>
             )}
           </Box>
 

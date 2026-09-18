@@ -1,4 +1,6 @@
+@layer theme, base, radix, components, utilities;
 @import "tailwindcss";
+@import "@radix-ui/themes/styles.css" layer(radix);
 
 :root {
   --background: #ffffff;

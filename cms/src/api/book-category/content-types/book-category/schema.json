@@ -38,6 +38,12 @@
           "localized": true
         }
       }
+    },
+    "catalog": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "api::catalog.catalog",
+      "required": true
     }
   }
 }

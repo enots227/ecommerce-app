@@ -491,6 +491,8 @@ export interface ApiBookCategoryBookCategory
   };
   attributes: {
     books: Schema.Attribute.Relation<'manyToMany', 'api::book.book'>;
+    catalog: Schema.Attribute.Relation<'oneToOne', 'api::catalog.catalog'> &
+      Schema.Attribute.Required;
     createdAt: Schema.Attribute.DateTime;
     createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;

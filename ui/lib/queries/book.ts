@@ -19,6 +19,14 @@ export const BookQuery = graphql(`
         firstName
         lastName
       }
+      categories {
+        documentId
+        title
+        catalog {
+          documentId
+          slug
+        }
+      }
       stockKeepingUnits {
         documentId
         condition

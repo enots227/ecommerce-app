@@ -15,9 +15,10 @@ export async function seedEnvironment(strapi: Core.Strapi): Promise<void> {
   await seedApiToken(strapi);
   await seedAuthors(strapi);
   await seedBooks(strapi);
+  // Categories link to the genre catalogs, so those must exist first.
+  await seedCatalogs(strapi);
   await seedBookCategories(strapi);
   await seedBookEditions(strapi);
   await seedBookSkus(strapi);
   await seedSkuDiscounts(strapi);
-  await seedCatalogs(strapi);
 }

@@ -3,7 +3,6 @@ import { Geist, Geist_Mono } from "next/font/google";
 import { Theme } from "@radix-ui/themes";
 import { Providers } from "./providers";
 
-import "@radix-ui/themes/styles.css";
 import "./globals.css";
 import { getIntl } from "@/intl";
 

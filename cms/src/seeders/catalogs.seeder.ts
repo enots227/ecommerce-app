@@ -139,12 +139,15 @@ export async function seedCatalogs(strapi: Core.Strapi): Promise<void> {
     return;
   }
 
+  const genres = genreCatalogs();
   const catalogsByType: CatalogsByType = {
     BOOK: {
-      ...fakeBookCatalog(
-        FAKE_BOOK_PAGE_COUNT,
-        Object.keys(CATALOGS_BY_TYPE.BOOK),
-      ),
+      ...fakeBookCatalog(FAKE_BOOK_PAGE_COUNT, [
+        ...Object.keys(genres),
+        ...Object.keys(CATALOGS_BY_TYPE.BOOK),
+      ]),
+      // Curated pages win a slug clash, e.g. "romance" keeps its summary.
+      ...genres,
       ...CATALOGS_BY_TYPE.BOOK,
     },
     BOOK_CATEGORY: {
@@ -176,6 +179,24 @@ export async function seedCatalogs(strapi: Core.Strapi): Promise<void> {
   strapi.log.info(`Seeded ${payloads.length} catalog landing pages`);
 }
 
+/** The slug of a genre's own catalog, which is also its value in category filters. */
+export function genreSlug(genre: string): string {
+  return faker.helpers.slugify(genre).toLowerCase();
+}
+
+/**
+ * One catalog per genre `faker.book.genre()` can produce, titled after the genre,
+ * so every book category has a landing page to link to.
+ */
+function genreCatalogs(): Record<string, Catalog> {
+  return Object.fromEntries(
+    faker.definitions.book.genre.map((genre) => [
+      genreSlug(genre),
+      { title: genre, filters: { category: [genreSlug(genre)] } },
+    ]),
+  );
+}
+
 /** A plausible landing page slug, such as "gleaming-science-fiction". */
 export function generateFakeSlug(genre = faker.book.genre()): string {
   return faker.helpers
@@ -203,7 +224,7 @@ function fakeBookCatalog(
         ? faker.lorem.sentences({ min: 1, max: 3 })
         : undefined,
       filters: {
-        category: [faker.helpers.slugify(genre).toLowerCase()],
+        category: [genreSlug(genre)],
         // Some pages narrow the genre further, as a merchandiser might.
         format: faker.helpers.maybe(
           () => faker.helpers.arrayElements(FAKE_FORMATS, { min: 1, max: 2 }),
