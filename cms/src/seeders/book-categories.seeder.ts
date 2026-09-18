@@ -1,0 +1,55 @@
+import { Core } from "@strapi/strapi";
+import { faker } from "@faker-js/faker";
+import { PromisePool } from "@supercharge/promise-pool";
+
+const CONCURRENCY = 5;
+
+/**
+ * Seeds one category per genre `faker.book.genre()` can produce — the same
+ * genres the catalog filters slugify — and files each seeded book under a few.
+ */
+export async function seedBookCategories(strapi: Core.Strapi): Promise<void> {
+  const categories = strapi.documents("api::book-category.book-category");
+  if ((await categories.count({})) > 0) {
+    strapi.log.info("BookCategories have already been seeded");
+    return;
+  }
+
+  const bookIds = (await strapi.documents("api::book.book").findMany()).map(
+    (book) => book.documentId,
+  );
+  if (bookIds.length === 0) {
+    strapi.log.warn("No books found; seeding book categories without books");
+  }
+
+  // Pick each book's categories, then invert: the category side owns the relation.
+  const genres = faker.definitions.book.genre;
+  const bookIdsByGenre = new Map<string, string[]>(
+    genres.map((genre) => [genre, []]),
+  );
+  for (const bookId of bookIds) {
+    for (const genre of faker.helpers.arrayElements(genres, {
+      min: 1,
+      max: 3,
+    })) {
+      bookIdsByGenre.get(genre)!.push(bookId);
+    }
+  }
+
+  const payloads = [...bookIdsByGenre].map(([title, books]) => ({
+    title,
+    description: faker.lorem.sentence(),
+    books,
+  }));
+
+  await PromisePool.withConcurrency(CONCURRENCY)
+    .for(payloads)
+    // The pool collects errors by default; rethrow so a failed insert aborts seeding.
+    .handleError((error) => {
+      throw error;
+    })
+    .process((data) => categories.create({ data, status: "published" }));
+  strapi.log.info(
+    `Seeded ${payloads.length} book categories across ${bookIds.length} books`,
+  );
+}
