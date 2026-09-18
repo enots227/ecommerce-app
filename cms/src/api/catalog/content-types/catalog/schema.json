@@ -33,7 +33,7 @@
       },
       "required": true,
       "unique": true,
-      "regex": "^\\/books\\/[A-Za-z0-9_-]+\\/$"
+      "regex": "^\\/books\\/([A-Za-z0-9_-]+\\/)?$"
     },
     "summary": {
       "type": "blocks",

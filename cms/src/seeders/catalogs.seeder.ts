@@ -29,9 +29,15 @@ interface Catalog {
   layout: Grid[];
 }
 
-// Keyed by slug.
+// Keyed by url path.
 const CATALOGS = {
-  fiction: {
+  "/books/": {
+    title: "Books",
+    summary:
+      "New and used books across every genre, from bestsellers to hidden gems.",
+    layout: [{ entity: "BOOK_CATEGORY", filters: {} }, ...bookGrid({})],
+  },
+  "/books/fiction/": {
     title: "Fiction",
     summary: "Novels and short stories from every corner of the imagination.",
     layout: bookGrid({
@@ -50,7 +56,7 @@ const CATALOGS = {
       ],
     }),
   },
-  "non-fiction": {
+  "/books/non-fiction/": {
     title: "Non-Fiction",
     summary: "Biographies, memoirs, and big ideas about the real world.",
     layout: bookGrid({
@@ -64,58 +70,58 @@ const CATALOGS = {
       ],
     }),
   },
-  "mystery-thriller": {
+  "/books/mystery-thriller/": {
     title: "Mystery & Thriller",
     summary: "Whodunits, detectives, and page-turners you won't put down.",
     layout: bookGrid({ category: ["mystery", "thriller", "detective"] }),
   },
-  "science-fiction-fantasy": {
+  "/books/science-fiction-fantasy/": {
     title: "Science Fiction & Fantasy",
     summary: "Distant futures, other worlds, and magic of every kind.",
     layout: bookGrid({ category: ["science-fiction", "fantasy"] }),
   },
-  romance: {
+  "/books/romance/": {
     title: "Romance",
     summary: "Love stories, from sweet to steamy.",
     layout: bookGrid({ category: ["romance"] }),
   },
-  hardcovers: {
+  "/books/hardcovers/": {
     title: "Hardcovers",
     summary: "Durable, handsome editions built for the shelf.",
     layout: bookGrid({ format: ["HARDCOVER"] }),
   },
-  paperbacks: {
+  "/books/paperbacks/": {
     title: "Paperbacks",
     summary: "Trade and mass-market paperbacks, light enough to take anywhere.",
     layout: bookGrid({ format: ["TRADE_PAPERBACK", "PAPERBACK"] }),
   },
-  "used-books": {
+  "/books/used-books/": {
     title: "Used Books",
     summary: "Pre-loved copies at a fraction of the new price.",
     layout: bookGrid({
       condition: ["PRISTINE", "EXCELLENT", "GOOD", "ACCEPTABLE"],
     }),
   },
-  "like-new": {
+  "/books/like-new/": {
     title: "Like New",
     summary: "Used copies in pristine or excellent condition.",
     layout: bookGrid({ condition: ["PRISTINE", "EXCELLENT"] }),
   },
-  "books-under-10": {
+  "/books/books-under-10/": {
     title: "Books Under $10",
     summary: "Great reads that won't break the bank.",
     layout: bookGrid({ maxPrice: 1000 }),
   },
-  "bargain-paperbacks": {
+  "/books/bargain-paperbacks/": {
     title: "Bargain Paperbacks",
     layout: bookGrid({ format: ["PAPERBACK"], maxPrice: 1000 }),
   },
-  "on-sale": {
+  "/books/on-sale/": {
     title: "On Sale",
     summary: "Limited-time discounts across the store.",
     layout: bookGrid({ onSale: true }),
   },
-  genre: {
+  "/books/genre/": {
     title: "Genres",
     layout: [{ entity: "BOOK_CATEGORY", filters: {} }],
   },
@@ -143,14 +149,14 @@ export async function seedCatalogs(strapi: Core.Strapi): Promise<void> {
       ...Object.keys(genres),
       ...Object.keys(CATALOGS),
     ]),
-    // Curated pages win a slug clash, e.g. "romance" keeps its summary.
+    // Curated pages win a url path clash, e.g. "/books/romance/" keeps its summary.
     ...genres,
     ...CATALOGS,
   };
 
   const payloads = Object.entries(pages).map(
-    ([slug, { summary, layout, ...page }]) => ({
-      urlPath: catalogUrlPath(slug),
+    ([urlPath, { summary, layout, ...page }]) => ({
+      urlPath,
       ...page,
       summary: summary ? toBlocks(summary) : undefined,
       layout: layout.map((grid) => ({
@@ -196,7 +202,7 @@ function bookGrid(filters: BookFilters): Grid[] {
 function genreCatalogs(): Record<string, Catalog> {
   return Object.fromEntries(
     faker.definitions.book.genre.map((genre) => [
-      genreSlug(genre),
+      genreUrlPath(genre),
       { title: genre, layout: bookGrid({ category: [genreSlug(genre)] }) },
     ]),
   );
@@ -209,21 +215,22 @@ export function generateFakeSlug(genre = faker.book.genre()): string {
     .toLowerCase();
 }
 
-/** Fake book landing pages, each filtering on one genre, keyed by a unique slug. */
+/** Fake book landing pages, each filtering on one genre, keyed by a unique url path. */
 function fakeBookCatalog(
   count: number,
-  takenSlugs: Iterable<string>,
+  takenUrlPaths: Iterable<string>,
 ): Record<string, Catalog> {
-  const taken = new Set(takenSlugs);
+  const taken = new Set(takenUrlPaths);
   const pages: Record<string, Catalog> = {};
 
   while (Object.keys(pages).length < count) {
     const genre = faker.book.genre();
     const slug = generateFakeSlug(genre);
-    if (taken.has(slug)) continue;
-    taken.add(slug);
+    const urlPath = catalogUrlPath(slug);
+    if (taken.has(urlPath)) continue;
+    taken.add(urlPath);
 
-    pages[slug] = {
+    pages[urlPath] = {
       title: titleFromSlug(slug),
       summary: faker.datatype.boolean({ probability: 0.8 })
         ? faker.lorem.sentences({ min: 1, max: 3 })
