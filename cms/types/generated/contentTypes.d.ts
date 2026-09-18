@@ -473,6 +473,53 @@ export interface ApiAuthorAuthor extends Struct.CollectionTypeSchema {
   };
 }
 
+export interface ApiBookCategoryBookCategory
+  extends Struct.CollectionTypeSchema {
+  collectionName: 'book_categories';
+  info: {
+    displayName: 'BookCategory';
+    pluralName: 'book-categories';
+    singularName: 'book-category';
+  };
+  options: {
+    draftAndPublish: true;
+  };
+  pluginOptions: {
+    i18n: {
+      localized: true;
+    };
+  };
+  attributes: {
+    books: Schema.Attribute.Relation<'manyToMany', 'api::book.book'>;
+    createdAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    description: Schema.Attribute.Text &
+      Schema.Attribute.SetPluginOptions<{
+        i18n: {
+          localized: true;
+        };
+      }>;
+    locale: Schema.Attribute.String;
+    localizations: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::book-category.book-category'
+    >;
+    publishedAt: Schema.Attribute.DateTime;
+    title: Schema.Attribute.String &
+      Schema.Attribute.Required &
+      Schema.Attribute.Unique &
+      Schema.Attribute.SetPluginOptions<{
+        i18n: {
+          localized: true;
+        };
+      }>;
+    updatedAt: Schema.Attribute.DateTime;
+    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+  };
+}
+
 export interface ApiBookEditionBookEdition extends Struct.CollectionTypeSchema {
   collectionName: 'book_editions';
   info: {
@@ -518,7 +565,7 @@ export interface ApiBookSkuBookSku extends Struct.CollectionTypeSchema {
     book: Schema.Attribute.Relation<'manyToOne', 'api::book.book'> &
       Schema.Attribute.Required;
     condition: Schema.Attribute.Enumeration<
-      ['NEW', 'PRISTINE', 'EXCELLENT', 'GOOD', 'FINE', 'FAIR', 'POOR']
+      ['NEW', 'PRISTINE', 'EXCELLENT', 'GOOD', 'ACCEPTABLE']
     > &
       Schema.Attribute.Required;
     createdAt: Schema.Attribute.DateTime;
@@ -564,6 +611,10 @@ export interface ApiBookBook extends Struct.CollectionTypeSchema {
   };
   attributes: {
     authors: Schema.Attribute.Relation<'manyToMany', 'api::author.author'>;
+    categories: Schema.Attribute.Relation<
+      'manyToMany',
+      'api::book-category.book-category'
+    >;
     createdAt: Schema.Attribute.DateTime;
     createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;
@@ -618,24 +669,17 @@ export interface ApiCatalogCatalog extends Struct.CollectionTypeSchema {
     createdAt: Schema.Attribute.DateTime;
     createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;
-    locale: Schema.Attribute.String;
-    localizations: Schema.Attribute.Relation<
-      'oneToMany',
-      'api::catalog.catalog'
-    >;
-    productFilters: Schema.Attribute.JSON &
+    filters: Schema.Attribute.JSON &
       Schema.Attribute.SetPluginOptions<{
         i18n: {
           localized: true;
         };
       }>;
-    productType: Schema.Attribute.Enumeration<['BOOK']> &
-      Schema.Attribute.Required &
-      Schema.Attribute.SetPluginOptions<{
-        i18n: {
-          localized: false;
-        };
-      }>;
+    locale: Schema.Attribute.String;
+    localizations: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::catalog.catalog'
+    >;
     publishedAt: Schema.Attribute.DateTime;
     slug: Schema.Attribute.String &
       Schema.Attribute.Required &
@@ -656,6 +700,13 @@ export interface ApiCatalogCatalog extends Struct.CollectionTypeSchema {
       Schema.Attribute.SetPluginOptions<{
         i18n: {
           localized: true;
+        };
+      }>;
+    type: Schema.Attribute.Enumeration<['BOOK', 'BOOK_CATEGORY']> &
+      Schema.Attribute.Required &
+      Schema.Attribute.SetPluginOptions<{
+        i18n: {
+          localized: false;
         };
       }>;
     updatedAt: Schema.Attribute.DateTime;
@@ -1277,6 +1328,7 @@ declare module '@strapi/strapi' {
       'admin::transfer-token-permission': AdminTransferTokenPermission;
       'admin::user': AdminUser;
       'api::author.author': ApiAuthorAuthor;
+      'api::book-category.book-category': ApiBookCategoryBookCategory;
       'api::book-edition.book-edition': ApiBookEditionBookEdition;
       'api::book-sku.book-sku': ApiBookSkuBookSku;
       'api::book.book': ApiBookBook;

@@ -15,7 +15,7 @@
     }
   },
   "attributes": {
-    "productType": {
+    "type": {
       "type": "enumeration",
       "pluginOptions": {
         "i18n": {
@@ -24,7 +24,8 @@
       },
       "required": true,
       "enum": [
-        "BOOK"
+        "BOOK",
+        "BOOK_CATEGORY"
       ]
     },
     "title": {
@@ -54,7 +55,7 @@
         }
       }
     },
-    "productFilters": {
+    "filters": {
       "type": "json",
       "pluginOptions": {
         "i18n": {

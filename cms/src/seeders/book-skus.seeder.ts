@@ -13,10 +13,8 @@ const FORMAT_PRICES = {
 const USED_CONDITIONS = {
   PRISTINE: 0.9,
   EXCELLENT: 0.8,
-  FINE: 0.7,
   GOOD: 0.6,
-  FAIR: 0.45,
-  POOR: 0.3,
+  ACCEPTABLE: 0.4,
 } as const;
 
 type Format = keyof typeof FORMAT_PRICES;

@@ -38,9 +38,7 @@
         "PRISTINE",
         "EXCELLENT",
         "GOOD",
-        "FINE",
-        "FAIR",
-        "POOR"
+        "ACCEPTABLE"
       ]
     },
     "format": {

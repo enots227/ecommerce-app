@@ -55,10 +55,8 @@ const CONDITIONS: Enum_Booksku_Condition[] = [
   "NEW",
   "PRISTINE",
   "EXCELLENT",
-  "FINE",
   "GOOD",
-  "FAIR",
-  "POOR",
+  "ACCEPTABLE",
 ];
 
 /** Formats cheapest first. */
@@ -72,10 +70,8 @@ const CONDITION_LABELS: Record<Enum_Booksku_Condition, string> = {
   NEW: "New",
   PRISTINE: "Pristine",
   EXCELLENT: "Excellent",
-  FINE: "Fine",
   GOOD: "Good",
-  FAIR: "Fair",
-  POOR: "Poor",
+  ACCEPTABLE: "Acceptable",
 };
 
 const FORMAT_LABELS: Record<Enum_Booksku_Format, string> = {
@@ -135,7 +131,8 @@ function skuOffer(bookSku: BookSku, at: number): Offer | null {
     .filter((discount) => !!discount)
     .filter((discount) => isActive(discount, at))
     .reduce(
-      (lowest, discount) => Math.min(lowest, discounted(listPrice.price, discount)),
+      (lowest, discount) =>
+        Math.min(lowest, discounted(listPrice.price, discount)),
       listPrice.price,
     );
 
@@ -201,7 +198,10 @@ export function editionLabel(offer: Offer): string {
  * The offer a book's card leads with, or null when none are for sale. Other
  * offers stay available on the book page, so the price reads as a starting one.
  */
-export function featuredOffer(book: Book, at: number = Date.now()): Offer | null {
+export function featuredOffer(
+  book: Book,
+  at: number = Date.now(),
+): Offer | null {
   return offers(book, at)[0] ?? null;
 }
 

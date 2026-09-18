@@ -52,6 +52,12 @@
       "relation": "oneToMany",
       "target": "api::book-sku.book-sku",
       "mappedBy": "book"
+    },
+    "categories": {
+      "type": "relation",
+      "relation": "manyToMany",
+      "target": "api::book-category.book-category",
+      "mappedBy": "books"
     }
   }
 }

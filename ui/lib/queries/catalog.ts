@@ -7,7 +7,7 @@ export const CatalogQuery = graphql(`
       title
       slug
       summary
-      productFilters
+      filters
     }
   }
 `);
