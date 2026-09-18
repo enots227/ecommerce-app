@@ -1,0 +1,19 @@
+{
+  "collectionName": "components_avatar_list_avatar_lists",
+  "info": {
+    "displayName": "Avatar List",
+    "icon": "medium"
+  },
+  "options": {},
+  "attributes": {
+    "entity": {
+      "type": "enumeration",
+      "required": true,
+      "enum": [
+        "BOOK",
+        "BOOK_CATEGORY"
+      ]
+    }
+  },
+  "config": {}
+}

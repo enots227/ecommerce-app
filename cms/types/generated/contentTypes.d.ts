@@ -671,7 +671,9 @@ export interface ApiCatalogCatalog extends Struct.CollectionTypeSchema {
     createdAt: Schema.Attribute.DateTime;
     createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;
-    layout: Schema.Attribute.DynamicZone<['grid.grid']> &
+    layout: Schema.Attribute.DynamicZone<
+      ['grid.grid', 'avatar-list.avatar-list']
+    > &
       Schema.Attribute.SetPluginOptions<{
         i18n: {
           localized: true;

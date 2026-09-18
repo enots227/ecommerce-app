@@ -17,16 +17,31 @@ type BookFilters = {
   onSale?: boolean;
 };
 
-/** Mirrors the `grid.grid` component, without its `__component` discriminator. */
+/** UIDs of the components the catalog `layout` dynamic zone accepts. */
+enum LayoutComponent {
+  Grid = "grid.grid",
+  AvatarList = "avatar-list.avatar-list",
+}
+
+/** Mirrors the `grid.grid` component. */
 interface Grid {
+  __component: LayoutComponent.Grid;
   entity: CatalogEntity;
   filters: BookFilters;
 }
 
+/** Mirrors the `avatar-list.avatar-list` component. */
+interface AvatarList {
+  __component: LayoutComponent.AvatarList;
+  entity: CatalogEntity;
+}
+
+type LayoutItem = Grid | AvatarList;
+
 interface Catalog {
   title: string;
   summary?: string;
-  layout: Grid[];
+  layout: LayoutItem[];
 }
 
 // Keyed by url path.
@@ -35,7 +50,10 @@ const CATALOGS = {
     title: "Books",
     summary:
       "New and used books across every genre, from bestsellers to hidden gems.",
-    layout: [{ entity: "BOOK_CATEGORY", filters: {} }, ...bookGrid({})],
+    layout: [
+      { __component: LayoutComponent.AvatarList, entity: "BOOK_CATEGORY" },
+      ...bookGrid({}),
+    ],
   },
   "/books/fiction/": {
     title: "Fiction",
@@ -123,7 +141,13 @@ const CATALOGS = {
   },
   "/books/genre/": {
     title: "Genres",
-    layout: [{ entity: "BOOK_CATEGORY", filters: {} }],
+    layout: [
+      {
+        __component: LayoutComponent.Grid,
+        entity: "BOOK_CATEGORY",
+        filters: {},
+      },
+    ],
   },
 } satisfies Record<string, Catalog>;
 
@@ -159,10 +183,7 @@ export async function seedCatalogs(strapi: Core.Strapi): Promise<void> {
       urlPath,
       ...page,
       summary: summary ? toBlocks(summary) : undefined,
-      layout: layout.map((grid) => ({
-        __component: "grid.grid" as const,
-        ...grid,
-      })),
+      layout,
     }),
   );
 
@@ -192,7 +213,7 @@ export function genreUrlPath(genre: string): string {
 
 /** A single grid listing the books that match `filters`. */
 function bookGrid(filters: BookFilters): Grid[] {
-  return [{ entity: "BOOK", filters }];
+  return [{ __component: LayoutComponent.Grid, entity: "BOOK", filters }];
 }
 
 /**

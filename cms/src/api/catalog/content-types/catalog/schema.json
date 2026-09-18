@@ -51,7 +51,8 @@
         }
       },
       "components": [
-        "grid.grid"
+        "grid.grid",
+        "avatar-list.avatar-list"
       ]
     }
   }
